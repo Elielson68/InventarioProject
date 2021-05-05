@@ -3,14 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-namespace InventarioSystem{
-    public class ArmaduraGuerreiro : MonoBehaviour ,IEquipamento
+namespace InventarioSystem
+{
+    public class ArmaduraBarbaro : MonoBehaviour, IEquipamento
     {
-        public ArmaduraGuerreiro(GameObject spawnPosition)
+        public ArmaduraBarbaro(GameObject spawnPosition)
         {
             GameObject spriteGameObject = Instantiate<GameObject>(spawnPosition);
             SpriteItem = spriteGameObject.GetComponent<SpriteRenderer>();
-            Texture2D textureHelmo = Resources.Load<Texture2D>("SetWarrior/Icons/Body/Guerreiro");
+            Texture2D textureHelmo = Resources.Load<Texture2D>("SetWarrior/Icons/Body/Barbaro");
             Sprite mySprite = Sprite.Create(textureHelmo, new Rect(0.0f, 0.0f, textureHelmo.width, textureHelmo.height), new Vector2(0.0f, 0.0f), 100.0f);
             SpriteItem.sprite = mySprite;
             SpriteItem.sortingOrder = 1;
@@ -19,7 +20,7 @@ namespace InventarioSystem{
             boxColliderSprite.size = new Vector2(1.903571f, 1.897903f);
             spriteGameObject.tag = "equipavel";
 
-            ArmaduraGuerreiro component = spriteGameObject.AddComponent<ArmaduraGuerreiro>();
+            ArmaduraBarbaro component = spriteGameObject.AddComponent<ArmaduraBarbaro>();
             component.Nome = Nome;
             component.Tipo = Tipo;
             component.bodyPart = bodyPart;
@@ -33,11 +34,12 @@ namespace InventarioSystem{
         public int LUK { get; private set; } = 5;
         public int Peso { get; private set; } = 15;
         public string Tipo { get; private set; } = "equipavel";
-        public string bodyPart {get; private set;} = "Body";
-        public string Nome { get; set; } = "Armadura de guerra";
+        public string bodyPart { get; private set; } = "Body";
+        public string Nome { get; set; } = "Armadura de caça";
 
-        public string Classe { get; set; } = "Guerreiro";
-        public void BuffItem(){
+        public string Classe { get; set; } = "Barbaro";
+        public void BuffItem()
+        {
             STR += 3;
             AGI -= 1;
         }
@@ -49,9 +51,10 @@ namespace InventarioSystem{
                 Destroy(gameObject);
             }
         }
+
         public Item DeepCopy()
         {
-            ArmaduraGuerreiro other = (ArmaduraGuerreiro)this.MemberwiseClone();
+            ArmaduraBarbaro other = (ArmaduraBarbaro)this.MemberwiseClone();
             return other;
         }
     }

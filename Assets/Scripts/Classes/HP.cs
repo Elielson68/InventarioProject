@@ -6,6 +6,10 @@ using UnityEngine.UI;
 namespace InventarioSystem{
     public class MP : MonoBehaviour, IConsumivel
     {
+        public MP()
+        {
+
+        }
         public MP(SpriteRenderer spawnPosition)
         {
             SpriteItem = Instantiate<SpriteRenderer>(spawnPosition);
@@ -28,6 +32,12 @@ namespace InventarioSystem{
             {
                 Destroy(gameObject);
             }
+        }
+
+        public Item DeepCopy()
+        {
+            MP other = (MP) this.MemberwiseClone();
+            return other;
         }
     }
 }

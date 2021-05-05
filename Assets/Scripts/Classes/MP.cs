@@ -30,5 +30,10 @@ namespace InventarioSystem{
                 Destroy(gameObject);
             }
         }
+        public Item DeepCopy()
+        {
+            MP other = (MP)this.MemberwiseClone();
+            return other;
+        }
     }
 }

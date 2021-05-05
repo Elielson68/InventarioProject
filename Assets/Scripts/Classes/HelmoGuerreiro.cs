@@ -11,17 +11,30 @@ namespace InventarioSystem {
         {
             GameObject spriteGameObject = Instantiate<GameObject>(spawnPosition);
             SpriteItem = spriteGameObject.GetComponent<SpriteRenderer>();
-            Texture2D textureHelmo = Resources.Load<Texture2D>("SetWarrior/Icons/Helmet/4");
+            Texture2D textureHelmo = Resources.Load<Texture2D>("SetWarrior/Icons/Head/Guerreiro");
             Sprite mySprite = Sprite.Create(textureHelmo, new Rect(0.0f, 0.0f, textureHelmo.width, textureHelmo.height), new Vector2(0.0f, 0.0f), 100.0f);
             SpriteItem.sprite = mySprite;
+            //SpriteItem.sprite.name = Nome;
             SpriteItem.sortingOrder = 1;
-            spriteGameObject.AddComponent<HelmoGuerreiro>();
+            
             BoxCollider2D boxColliderSprite =  spriteGameObject.GetComponent<BoxCollider2D>();
             boxColliderSprite.offset = new Vector2(0.9557155f, 0.9581932f);
             boxColliderSprite.size = new Vector2(1.903571f, 1.897903f);
             spriteGameObject.tag = "equipavel";
 
+            HelmoGuerreiro component = spriteGameObject.AddComponent<HelmoGuerreiro>();
+            component.Nome = Nome;
+            component.Tipo = Tipo;
+            component.bodyPart = bodyPart;
+            component.Classe = Classe;
+            component.SpriteItem = SpriteItem;
+            component.STR = 6;
+            component.AGI = 3;
+            component.DEX = 4;
+            component.LUK = 5;
+            component.Peso = 9;
         }
+
         public SpriteRenderer SpriteItem { get; set; }
         public int STR { get; private set; } = 6;
         public int AGI { get; private set; } = 3;
@@ -30,8 +43,8 @@ namespace InventarioSystem {
         public int Peso { get; private set; } = 9;
         public string Tipo { get; private set; } = "equipavel";
         public string bodyPart { get; private set; } = "Head";
-        public string Nome { get; set; }
-
+        public string Nome { get; set; } = "Helmo de guerra";
+        public string Classe { get; set; } = "Guerreiro";
 
         public void BuffItem() {
             STR += 2;
@@ -44,6 +57,20 @@ namespace InventarioSystem {
                 Destroy(gameObject);
             }
         }
-
+        public Item DeepCopy()
+        {
+            HelmoGuerreiro other = (HelmoGuerreiro)this.MemberwiseClone();
+            other.Tipo = Tipo;
+            other.bodyPart = bodyPart;
+            other.Classe = Classe;
+            other.SpriteItem = SpriteItem;
+            other.STR = 6;
+            other.AGI = 3;
+            other.DEX = 4;
+            other.LUK = 5;
+            other.Peso = 9;
+            other.Nome = Nome;
+            return other;
+        }
     }
 }

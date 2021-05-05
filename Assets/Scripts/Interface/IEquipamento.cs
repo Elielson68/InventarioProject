@@ -8,6 +8,8 @@ namespace InventarioSystem{
         int LUK {get;}
 
         string bodyPart {get;}
+
+        string Classe { get; set; }
         void BuffItem();
     }
 }

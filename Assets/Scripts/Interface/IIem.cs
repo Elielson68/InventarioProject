@@ -12,5 +12,7 @@ namespace InventarioSystem{
         SpriteRenderer SpriteItem { get; set; }
 
         void OnTriggerEnter2D(Collider2D collision);
+
+        public Item DeepCopy();
     }
 }
