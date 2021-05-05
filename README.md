@@ -98,7 +98,7 @@ Agora já temos uma coisa mais concreta, uma interface equipamento que irá cont
   
  Isso *****, agora sim temos um padrão, temos organização e sabemos a importância dela. 
  
- Agora para finalizar, uma pequena explicação sobre a última classe <b>Inventario<b> que está <i>alone</i> que é a Inventario. Essa classe irá conter duas listas, uma para os itens gerais e outra específica para equipamentos e conterá alguns métodos mais complexos que irei explicar abaixo na codificação.
+ Agora para finalizar, uma pequena explicação sobre a última classe <b>Inventario</b> que está <i>alone</i> que é a Inventario. Essa classe irá conter duas listas, uma para os itens gerais e outra específica para equipamentos e conterá alguns métodos mais complexos que irei explicar abaixo na codificação.
  Bem, já tô ansioso, chega de diagramas e vamos mandar bala na codificação!
  
  ## PARTE 2: Não basta funcionar, tem que ser legível
