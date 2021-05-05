@@ -17,7 +17,6 @@ namespace InventarioSystem{
             }
             Instance = this;
             List<Item> inventarioGeral = new List<Item>();
-            List<IEquipamento> inventarioEquipamento = new List<IEquipamento>();
             List<GameObject> SlotsInventario = new List<GameObject>();
             List<GameObject> SlotsEquipados = new List<GameObject>();
             slot_inventario_count = 0;
@@ -25,25 +24,33 @@ namespace InventarioSystem{
         }
         public Sprite spriteSlotPadraoInventario;
         public List<Item> inventarioGeral = new List<Item>();
-        public List<IEquipamento> inventarioEquipamento = new List<IEquipamento>();
-        public List<GameObject> slotsGameObject = new List<GameObject>();
+        public List<GameObject> slotsInventaryGameObjects = new List<GameObject>();
+        public List<GameObject> slotsEquipGameObjects = new List<GameObject>();
         private Dictionary<string, GameObject> SlotsInventario = new Dictionary<string, GameObject>();
+        private Dictionary<string, GameObject> SlotsEquipados = new Dictionary<string, GameObject>();
         private Dictionary<string, Item> ItemInventario = new Dictionary<string, Item>();
         private Dictionary<string, Item> ItemEquipado = new Dictionary<string, Item>();
-        public List<GameObject> SlotsEquipados = new List<GameObject>();
+        
         public List<GameObject> Buttons = new List<GameObject>();
         public GameObject inventarioGameObject;
-        const int TOTAL_SLOTS_INVENTARIO = 5;
+        const int TOTAL_SLOTS_INVENTARIO = 6;
         const int TOTAL_SLOTS_EQUIPADOS = 4;
         private int slot_inventario_count = 0;
         void Start()
         {
             inventarioGameObject.SetActive(false);
-            foreach(GameObject slot in slotsGameObject)
+            foreach(GameObject slot in slotsInventaryGameObjects)
             {
-                int count = slotsGameObject.IndexOf(slot);
+                int count = slotsInventaryGameObjects.IndexOf(slot);
                 SlotsInventario[$"slot{count}"] = slot;
                 SlotsInventario[$"slot{count}"].GetComponent<Button>().onClick.AddListener(delegate { EquiparItem($"slot{count}"); });
+                ItemInventario[$"slot{count}"] = null;
+            }
+            foreach (GameObject slot in slotsEquipGameObjects)
+            {
+                int count = slotsEquipGameObjects.IndexOf(slot);
+                SlotsEquipados[$"slot{count}"] = slot;
+                ItemEquipado[$"slot{count}"] = null;
             }
         }
 
@@ -57,17 +64,24 @@ namespace InventarioSystem{
         public void AdicionarItemInventarioGeral(Item item){
             
             inventarioGeral.Add(item);
-            print(ListarItensInventarioGeral());
             
         }
-        private bool isEquipavelItem(int index){
-            if(inventarioGeral[index].Tipo != "equipavel"){
+        private bool isEquipavelItem(string key){
+            if(ItemInventario[key].Tipo == "equipavel")
+            {
                 
-                return false;
+                return true;
             }
-            return true;
+            return false;
         }
-
+        private bool isConsumivelItem(string key)
+        {
+            if (ItemInventario[key].Tipo == "consumivel")
+            {
+                return true;
+            }
+            return false;
+        }
         private bool isEmptySlot(string key){
             if (!ItemInventario.ContainsKey(key) || ItemInventario[key] == null)
             {
@@ -82,39 +96,71 @@ namespace InventarioSystem{
             {
                 return;
             }
-            Item itemJaEquipado = ItemEquipado.FirstOrDefault(x => ((IEquipamento)x.Value).bodyPart == ((IEquipamento)ItemInventario[key]).bodyPart).Value;
-            if (ItemEquipado.Count >= 5 && itemJaEquipado == null)
+            if (!isEquipavelItem(key))
+            {
+                if (isConsumivelItem(key))
+                {
+                    SlotsInventario[key].GetComponent<Image>().sprite = spriteSlotPadraoInventario;
+                    ItemInventario[key] = null;
+                }
+                return;
+            }
+            Item itemJaEquipado = null;
+            string key_item_equipado = null;
+            try
+            {
+                itemJaEquipado = ItemEquipado.FirstOrDefault(x => ((IEquipamento)x.Value).bodyPart == ((IEquipamento)ItemInventario[key]).bodyPart).Value;
+                key_item_equipado = ItemEquipado.FirstOrDefault(x => ((IEquipamento)x.Value).bodyPart == ((IEquipamento)ItemInventario[key]).bodyPart).Key;
+                print($"Nome item já equipado: {itemJaEquipado.Nome} | Key do item: {key_item_equipado}");
+            }
+            catch
+            {
+                
+                print("Deu erro em alguma coisa ae");
+            }
+            
+            if (isEquipamentosFull() && key_item_equipado == null)
             {
                 return;
             }
-            string key2 = $"slot{ItemEquipado.Count}";
-            print($"Equipamento Count: {ItemEquipado.Count}");
-            string key_item_equipado = ItemEquipado.FirstOrDefault(x => ((IEquipamento)x.Value).bodyPart == ((IEquipamento)ItemInventario[key]).bodyPart).Key;
-            key_item_equipado = key_item_equipado.Replace("slot", "");
-            int index = int.Parse(key_item_equipado);
-            GameObject slot_position = SlotsEquipados[index];
-            
+            GameObject slot_position = new GameObject();
+            string key2 = ItemEquipado.FirstOrDefault(x => x.Value == null).Key;
+            print(key2);
+            if (key_item_equipado != null)
+            {
+                key2 = key_item_equipado;
+                slot_position = SlotsEquipados[key_item_equipado];
+            }
+            else
+            {
+                slot_position = SlotsEquipados[key2];
+            }
             if (itemJaEquipado != null)
             {
-                print("Oi");
-                
                 Image s = Instantiate(slot_position.GetComponent<Image>());
-                print(SlotsInventario[key].GetComponent<Image>());
                 slot_position.GetComponent<Image>().sprite = SlotsInventario[key].GetComponent<Image>().sprite;
                 slot_position.GetComponent<Image>().sprite.name = SlotsInventario[key].GetComponent<Image>().sprite.name;
                 SlotsInventario[key].GetComponent<Image>().sprite = s.sprite;
                 SlotsInventario[key].GetComponent<Image>().sprite.name = s.sprite.name;
                 Destroy(s.gameObject);
-                key2 = ItemEquipado.First(x => x.Value.Tipo == ItemInventario[key].Tipo).Key;
+                key2 = ItemEquipado.First(x => ((IEquipamento)x.Value).bodyPart == ((IEquipamento)ItemInventario[key]).bodyPart).Key;
                 int[] val = { 2, 2, 2, 2 };
-                Item aux2 = new ItemGuerreiro(ItemEquipado[key2].Nome, ItemEquipado[key2].Tipo, "corpo", "guerra", val);
-                aux2 = ItemEquipado[key2];
-                ItemEquipado[key2] = ItemInventario[key];
+                IEquipamento aux2 = new ItemGuerreiro(ItemEquipado[key2].Nome, ItemEquipado[key2].Tipo, "corpo", "guerra", val);
+                aux2 = (IEquipamento) ItemEquipado[key2];
+                ItemEquipado[key2] = (IEquipamento) ItemInventario[key];
                 ItemInventario[key] = aux2;
                 
             }
             else
             {
+                try
+                {
+                    print($"Nome item já equipado: {itemJaEquipado.Nome} | Key do item: {key_item_equipado}");
+                }
+                catch
+                {
+                    print("Deu erro em alguma coisa ae");
+                }
                 if (!ItemEquipado.ContainsKey(key2) && ItemEquipado.Count <= TOTAL_SLOTS_INVENTARIO)
                 {
                     ItemEquipado.Add(key2, ItemInventario[key]);
@@ -122,12 +168,12 @@ namespace InventarioSystem{
                 else
                 {
                     key2 = ItemEquipado.FirstOrDefault(x => x.Value == null).Key;
-                    print(key2);
                 }
+                print($"Key: {key} | {key2}");
                 slot_position.GetComponent<Image>().sprite = SlotsInventario[key].GetComponent<Image>().sprite;
                 SlotsInventario[key].GetComponent<Image>().sprite = spriteSlotPadraoInventario;
-                
-                ItemEquipado[key2] = ItemInventario[key];
+                ItemEquipado[key2] = (IEquipamento)ItemEquipado[key2];
+                ItemEquipado[key2] = (IEquipamento) ItemInventario[key];
                 ItemInventario[key] = null;
             }
         }
@@ -142,17 +188,6 @@ namespace InventarioSystem{
                 log += $"{inventarioGeral.IndexOf(i)+1} - {i.Nome} | {i.Tipo}\n";
             }
             return log;
-        }
-
-        public void ListarItensInventarioEquipamento(){
-            Console.WriteLine("___ITENS NOS EQUIPADOS___\n");
-            if(inventarioEquipamento.Count == 0){
-                Console.WriteLine("\nINVENTÁRIO VAZIO\n");
-                return;
-            }
-            foreach(IEquipamento i in inventarioEquipamento){
-                Console.WriteLine($"{inventarioEquipamento.IndexOf(i)+1} - {i.Nome}\n");
-            }
         }
 
         public void ListarItensDoTipo(string tipo){
@@ -171,25 +206,16 @@ namespace InventarioSystem{
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
-            if (slot_inventario_count >= TOTAL_SLOTS_INVENTARIO)
+            if (isInventarioFull())
                 return;
             if (collision.CompareTag("equipavel"))
             {
                 IEquipamento novoItem = collision.GetComponent<IEquipamento>();
                 int[] atributos = { novoItem.STR, novoItem.AGI, novoItem.DEX, novoItem.LUK};
-                
-                ItemGuerreiro itemInfos = (ItemGuerreiro) InventarioFase.Instance.CriadorItensFase.criarItemGuerreiro(nome: novoItem.Nome, tipo: novoItem.Tipo, body: novoItem.bodyPart, classe: novoItem.Classe, atri: atributos);
-                string key = $"slot{ItemInventario.Count}";
-                if (!ItemInventario.ContainsKey(key) && ItemInventario.Count <= TOTAL_SLOTS_INVENTARIO)
-                {
-                    ItemInventario.Add(key, itemInfos);
-                }
-                else
-                {
-                    key = ItemInventario.FirstOrDefault(x => x.Value == null).Key;
-                    ItemInventario[key] = itemInfos;
-                }
-                
+                ItemGuerreiro itemInfos = (ItemGuerreiro) SpawnManager.Instance.CriadorItensFase.criarItemGuerreiro(nome: novoItem.Nome, tipo: novoItem.Tipo, body: novoItem.bodyPart, classe: novoItem.Classe, atri: atributos);
+                string key;
+                key = ItemInventario.FirstOrDefault(x => x.Value == null).Key;
+                ItemInventario[key] = itemInfos;
                 GameObject slot_position = SlotsInventario[key];
                 if (novoItem.SpriteItem == null)
                     novoItem.SpriteItem = collision.gameObject.GetComponent<SpriteRenderer>();
@@ -197,6 +223,32 @@ namespace InventarioSystem{
                 slot_position.GetComponent<Image>().sprite = sprt.sprite;
                 Destroy(sprt);
                 
+            }
+            if (collision.CompareTag("consumivel"))
+            {
+                IConsumivel novoItem = collision.GetComponent<IConsumivel>();
+                string key;
+                key = ItemInventario.FirstOrDefault(x => x.Value == null).Key;
+                ItemInventario[key] = novoItem;
+                GameObject slot_position = SlotsInventario[key];
+                if (novoItem.SpriteItem == null)
+                    novoItem.SpriteItem = collision.gameObject.GetComponent<SpriteRenderer>();
+                SpriteRenderer sprt = Instantiate(collision.gameObject.GetComponent<SpriteRenderer>());
+                slot_position.GetComponent<Image>().sprite = sprt.sprite;
+                Destroy(sprt);
+            }
+            if (collision.CompareTag("inutil"))
+            {
+                Inutil novoItem = collision.GetComponent<Inutil>();
+                string key;
+                key = ItemInventario.FirstOrDefault(x => x.Value == null).Key;
+                ItemInventario[key] = novoItem;
+                GameObject slot_position = SlotsInventario[key];
+                if (novoItem.SpriteItem == null)
+                    novoItem.SpriteItem = collision.gameObject.GetComponent<SpriteRenderer>();
+                SpriteRenderer sprt = Instantiate(collision.gameObject.GetComponent<SpriteRenderer>());
+                slot_position.GetComponent<Image>().sprite = sprt.sprite;
+                Destroy(sprt);
             }
         }
         public string GetInfoItem(string key)
@@ -207,9 +259,31 @@ namespace InventarioSystem{
             string infos = $"Nome: {equip.Nome}\n\t_____ATRIBUTOS____\nSTR: {equip.STR}\nAGI: {equip.AGI}\nDEX: {equip.DEX}\nLUK: {equip.LUK}";
             return infos;
         }
-        public void meudeus()
+        public bool isInventarioFull()
         {
-            print("AAAAAAAAAAAAH");
+            
+            bool slot = ItemInventario.All( x=> x.Value != null);
+            if (slot)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public bool isEquipamentosFull()
+        {
+
+            bool slot = ItemEquipado.All(x => x.Value != null);
+            if (slot)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

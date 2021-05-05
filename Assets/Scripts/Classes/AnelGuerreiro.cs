@@ -38,7 +38,7 @@ namespace InventarioSystem
         public int Peso { get; private set; } = 9;
         public string Tipo { get; private set; } = "equipavel";
         public string bodyPart { get; private set; } = "Hand/Finger";
-        public string Nome { get; set; } = "Helmo de guerra";
+        public string Nome { get; set; } = "Anel de guerra";
         public string Classe { get; set; } = "Guerreiro";
 
         public void BuffItem()
@@ -50,7 +50,8 @@ namespace InventarioSystem
         {
             if (collision.CompareTag("Player"))
             {
-                Destroy(gameObject);
+                if (!Inventario.Instance.isInventarioFull())
+                    Destroy(gameObject);
             }
         }
 

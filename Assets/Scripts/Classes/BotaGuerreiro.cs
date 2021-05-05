@@ -28,6 +28,11 @@ namespace InventarioSystem
             component.bodyPart = bodyPart;
             component.Classe = Classe;
             component.SpriteItem = SpriteItem;
+            component.STR = 6;
+            component.AGI = 14;
+            component.DEX = 23;
+            component.LUK = 5;
+            component.Peso = 9;
         }
 
         public SpriteRenderer SpriteItem { get; set; }
@@ -38,7 +43,7 @@ namespace InventarioSystem
         public int Peso { get; private set; } = 9;
         public string Tipo { get; private set; } = "equipavel";
         public string bodyPart { get; private set; } = "Foot";
-        public string Nome { get; set; } = "Helmo de guerra";
+        public string Nome { get; set; } = "Bota de guerra";
         public string Classe { get; set; } = "Guerreiro";
 
         public void BuffItem()
@@ -50,7 +55,8 @@ namespace InventarioSystem
         {
             if (collision.CompareTag("Player"))
             {
-                Destroy(gameObject);
+                if (!Inventario.Instance.isInventarioFull())
+                    Destroy(gameObject);
             }
         }
         public Item DeepCopy()

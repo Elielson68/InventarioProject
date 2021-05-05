@@ -7,11 +7,12 @@ namespace InventarioSystem{
     public class MercadoVila: MonoBehaviour, IMercado
     {
 
-        public SpriteRenderer spawnItens;
-        public IConsumivel criarPoteVida(){
+        public IConsumivel criarPoteVida(GameObject spawnItens)
+        {
             return new HP(spawnItens);
         }
-        public IConsumivel criarPoteMana(){
+        public IConsumivel criarPoteMana(GameObject spawnItens)
+        {
             return new MP(spawnItens);
         }
     }

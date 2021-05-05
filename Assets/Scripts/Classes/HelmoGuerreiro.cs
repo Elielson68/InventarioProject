@@ -28,10 +28,10 @@ namespace InventarioSystem {
             component.bodyPart = bodyPart;
             component.Classe = Classe;
             component.SpriteItem = SpriteItem;
-            component.STR = 6;
-            component.AGI = 3;
-            component.DEX = 4;
-            component.LUK = 5;
+            component.STR = 8;
+            component.AGI = 5;
+            component.DEX = 5;
+            component.LUK = 3;
             component.Peso = 9;
         }
 
@@ -54,7 +54,9 @@ namespace InventarioSystem {
         {
             if (collision.CompareTag("Player"))
             {
-                Destroy(gameObject);
+                print(!Inventario.Instance.isInventarioFull());
+                if (!Inventario.Instance.isInventarioFull())
+                    Destroy(gameObject);
             }
         }
         public Item DeepCopy()

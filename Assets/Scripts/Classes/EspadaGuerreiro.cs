@@ -12,7 +12,7 @@ namespace InventarioSystem
         {
             GameObject spriteGameObject = Instantiate<GameObject>(spawnPosition);
             SpriteItem = spriteGameObject.GetComponent<SpriteRenderer>();
-            Texture2D textureHelmo = Resources.Load<Texture2D>("SetWarrior/Icons/Espada/Guerreiro");
+            Texture2D textureHelmo = Resources.Load<Texture2D>("SetWarrior/Icons/Hand/Weapon/Guerreiro");
             Sprite mySprite = Sprite.Create(textureHelmo, new Rect(0.0f, 0.0f, textureHelmo.width, textureHelmo.height), new Vector2(0.0f, 0.0f), 100.0f);
             SpriteItem.sprite = mySprite;
             SpriteItem.sortingOrder = 1;
@@ -28,6 +28,11 @@ namespace InventarioSystem
             component.bodyPart = bodyPart;
             component.Classe = Classe;
             component.SpriteItem = SpriteItem;
+            component.STR = 15;
+            component.AGI = 10;
+            component.DEX = 5;
+            component.LUK = 5;
+            component.Peso = 9;
         }
 
         public SpriteRenderer SpriteItem { get; set; }
@@ -37,8 +42,8 @@ namespace InventarioSystem
         public int LUK { get; private set; } = 5;
         public int Peso { get; private set; } = 9;
         public string Tipo { get; private set; } = "equipavel";
-        public string bodyPart { get; private set; } = "Hand";
-        public string Nome { get; set; } = "Helmo de guerra";
+        public string bodyPart { get; private set; } = "Hand/Weapon";
+        public string Nome { get; set; } = "Espada de guerra";
         public string Classe { get; set; } = "Guerreiro";
 
         public void BuffItem()
@@ -50,7 +55,8 @@ namespace InventarioSystem
         {
             if (collision.CompareTag("Player"))
             {
-                Destroy(gameObject);
+                if (!Inventario.Instance.isInventarioFull())
+                    Destroy(gameObject);
             }
         }
         public Item DeepCopy()
