@@ -44,7 +44,7 @@ A imagem abaixo representa um esquema que fiz pensando de início de como ficari
 Perceba como a relação entre <b>atributos</b> e <b>características</b> não faz muito <i>sentido</i> e foi nesse momento que me veio o primeiro insight
 
 
- <i>"Organizar isso seria bom, <b>padrozinar</b> seria perfeito."</i>
+ <i>"Organizar isso seria bom, <b>padronizar</b> seria perfeito."</i>
 
 E foi nesse momento que fui atrás de um padrão de projeto que atendesse as minhas espectativas, o que eu sabia era
 
@@ -86,7 +86,7 @@ Agora já temos uma coisa mais concreta, uma interface equipamento que irá cont
   Em seguida vamos seguir pela linha da direita, agora temos uma nova interface chamada <b>Equipamento</b> que possui todos os atributos que um equipamento deve ter.
   Logo abaixo vemos 2 classes de uma mesma linha: <b>HelmoGuerreiro</b> e <b>ArmaduraGuerreiro</b> que herdam de <b>Equipamento</b>.
   
-  Agora voltando um pouco pra cima, vemos uma outra interface chamada <b>Ferreiro</b> que <b>contém</b> a classe equipamento. Ela possui dois métodos que são: <b>criarHelmo()</b> e <b>criarArmadura<b>
+  Agora voltando um pouco pra cima, vemos uma outra interface chamada <b>Ferreiro</b> que <b>contém</b> a classe equipamento. Ela possui dois métodos que são: <b>criarHelmo()</b> e <b>criarArmadura()</b>
   conforme for aumentando a linha de produtos daquele tipo irá aumentar o número de métodos também, seguindo o mesmo padrão. Abaixo da interface vemos uma classe chamada FerreiroDeGuerreiro, que como o nome já diz, ficará responsável apenas pelos itens da classe guerreiro.
   
   Agora vamos olhar um pouco para a esquerda, se pararmos para observar:
